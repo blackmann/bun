@@ -10,7 +10,8 @@ std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForFileSystemRouterConstr
 std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForMD4;
 std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForMD4Constructor;std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForMD5;
 std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForMD5Constructor;std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForMatchedRoute;
-std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForNodeJSFS;
+std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForMockFn;
+std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForMockFnConstructor;std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForNodeJSFS;
 std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForNodeJSFSConstructor;std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForRequest;
 std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForRequestConstructor;std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForResolveMessage;
 std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForResolveMessageConstructor;std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceForResponse;

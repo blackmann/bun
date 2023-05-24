@@ -899,6 +899,7 @@ pub const Jest = struct {
 
             inline for (.{
                 "expect",
+                "fn",
                 "describe",
                 "it",
                 "test",
@@ -3684,6 +3685,7 @@ pub const DescribeScope = struct {
             // describe("foo", () => {}).describe("bar") will wrok
             .describe = .{ .get = createDescribe, .name = "describe" },
             .it = .{ .get = createTest, .name = "it" },
+            .@"fn" = .{ .get = createMockFn, .name = "fn" },
             .@"test" = .{ .get = createTest, .name = "test" },
         },
     );
@@ -4035,6 +4037,16 @@ pub const DescribeScope = struct {
     ) js.JSObjectRef {
         return DescribeScope.Class.make(ctx, this);
     }
+
+    pub fn createMockFn(
+        _: *DescribeScope,
+        ctx: js.JSContextRef,
+        _: js.JSValueRef,
+        _: js.JSStringRef,
+        _: js.ExceptionRef,
+    ) js.JSObjectRef {
+        return JSC.Jest.MockFn.getConstructor(ctx).asObjectRef();
+    }
 };
 
 var active_test_expectation_counter: TestScope.Counter = undefined;
@@ -4259,6 +4271,42 @@ pub const TestRunnerTask = struct {
         //
         // TODO: fix this bug
         // default_allocator.destroy(this);
+    }
+};
+
+pub const MockFn = struct {
+    name: string = "bun.fn()",
+
+    pub usingnamespace JSC.Codegen.JSMockFn;
+
+    pub fn call(
+        _: *JSC.JSGlobalObject,
+        _: *JSC.CallFrame,
+    ) callconv(.C) JSC.JSValue {
+        return .zero;
+    }
+
+    pub fn constructor(
+        globalObject: *JSC.JSGlobalObject,
+        callframe: *JSC.CallFrame,
+    ) callconv(.C) ?*MockFn {
+        _ = callframe.arguments(1);
+        globalObject.throw("bun.fn() cannot be called with new", .{});
+        return null;
+    }
+
+    pub fn finalize(
+        this: *MockFn,
+    ) callconv(.C) void {
+        VirtualMachine.get().allocator.destroy(this);
+    }
+
+    pub fn getMockName(_: *MockFn, _: *JSC.JSGlobalObject, _: *JSC.CallFrame) callconv(.C) JSC.JSValue {
+        return .zero;
+    }
+
+    pub fn mockName(_: *MockFn, _: *JSC.JSGlobalObject, _: *JSC.CallFrame) callconv(.C) JSC.JSValue {
+        return .zero;
     }
 };
 

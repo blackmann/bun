@@ -70,6 +70,12 @@ JSC::Structure* JSMatchedRouteStructure() { return m_JSMatchedRoute.getInitializ
   JSC::LazyClassStructure m_JSMatchedRoute;
   bool hasJSMatchedRouteSetterValue { false };
   mutable JSC::WriteBarrier<JSC::Unknown> m_JSMatchedRouteSetterValue;
+JSC::Structure* JSMockFnStructure() { return m_JSMockFn.getInitializedOnMainThread(this); }
+        JSC::JSObject* JSMockFnConstructor() { return m_JSMockFn.constructorInitializedOnMainThread(this); }
+        JSC::JSValue JSMockFnPrototype() { return m_JSMockFn.prototypeInitializedOnMainThread(this); }
+  JSC::LazyClassStructure m_JSMockFn;
+  bool hasJSMockFnSetterValue { false };
+  mutable JSC::WriteBarrier<JSC::Unknown> m_JSMockFnSetterValue;
 JSC::Structure* JSNodeJSFSStructure() { return m_JSNodeJSFS.getInitializedOnMainThread(this); }
         JSC::JSObject* JSNodeJSFSConstructor() { return m_JSNodeJSFS.constructorInitializedOnMainThread(this); }
         JSC::JSValue JSNodeJSFSPrototype() { return m_JSNodeJSFS.prototypeInitializedOnMainThread(this); }

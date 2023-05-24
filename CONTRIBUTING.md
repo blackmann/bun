@@ -47,6 +47,18 @@ TODO: document this (see [`bindings.zig`](src/bun.js/bindings/bindings.zig) and 
 
 Copy from examples like `Subprocess` or `Response`.
 
+If you get a linker error like:
+
+```
+ld.lld: error: undefined symbol: MockFn__getConstructor
+>>> referenced by generated_classes.zig:1835 (bun/src/bun.js/bindings/generated_classes.zig:1835)
+>>>               bun/packages/debug-bun-linux-x64/bun-debug.o:(src.bun.js.bindings.generated_classes.JSMockFn.getConstructor)
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make: *** [Makefile:1367: bun-link-lld-debug] Error 1
+```
+
+Run `make bindings -j10`
+
 ### ESM modules
 
 Bun implements ESM modules in a mix of native code and JavaScript.

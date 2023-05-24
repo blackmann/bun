@@ -10,7 +10,8 @@ std::unique_ptr<IsoSubspace> m_subspaceForFileSystemRouterConstructor;std::uniqu
 std::unique_ptr<IsoSubspace> m_subspaceForMD4;
 std::unique_ptr<IsoSubspace> m_subspaceForMD4Constructor;std::unique_ptr<IsoSubspace> m_subspaceForMD5;
 std::unique_ptr<IsoSubspace> m_subspaceForMD5Constructor;std::unique_ptr<IsoSubspace> m_subspaceForMatchedRoute;
-std::unique_ptr<IsoSubspace> m_subspaceForNodeJSFS;
+std::unique_ptr<IsoSubspace> m_subspaceForMockFn;
+std::unique_ptr<IsoSubspace> m_subspaceForMockFnConstructor;std::unique_ptr<IsoSubspace> m_subspaceForNodeJSFS;
 std::unique_ptr<IsoSubspace> m_subspaceForNodeJSFSConstructor;std::unique_ptr<IsoSubspace> m_subspaceForRequest;
 std::unique_ptr<IsoSubspace> m_subspaceForRequestConstructor;std::unique_ptr<IsoSubspace> m_subspaceForResolveMessage;
 std::unique_ptr<IsoSubspace> m_subspaceForResolveMessageConstructor;std::unique_ptr<IsoSubspace> m_subspaceForResponse;

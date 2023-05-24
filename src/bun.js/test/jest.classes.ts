@@ -231,4 +231,22 @@ export default [
       },
     },
   }),
+  define({
+    name: "MockFn",
+    call: true,
+    construct: true,
+    finalize: true,
+    values: ["arguments", "context", "returnValues"],
+    klass: {},
+    proto: {
+      getMockName: {
+        fn: "getMockName",
+        length: 0,
+      },
+      mockName: {
+        fn: "mockName",
+        length: 1
+      }
+    }
+  }),
 ];

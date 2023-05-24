@@ -71,6 +71,12 @@ void GlobalObject::initGeneratedLazyClasses() {
                  init.setStructure(WebCore::JSMatchedRoute::createStructure(init.vm, init.global, init.prototype));
                  
               });
+    m_JSMockFn.initLater(
+              [](LazyClassStructure::Initializer& init) {
+                 init.setPrototype(WebCore::JSMockFn::createPrototype(init.vm, reinterpret_cast<Zig::GlobalObject*>(init.global)));
+                 init.setStructure(WebCore::JSMockFn::createStructure(init.vm, init.global, init.prototype));
+                 init.setConstructor(WebCore::JSMockFn::createConstructor(init.vm, init.global, init.prototype));
+              });
     m_JSNodeJSFS.initLater(
               [](LazyClassStructure::Initializer& init) {
                  init.setPrototype(WebCore::JSNodeJSFS::createPrototype(init.vm, reinterpret_cast<Zig::GlobalObject*>(init.global)));
@@ -195,6 +201,7 @@ void GlobalObject::visitGeneratedLazyClasses(GlobalObject *thisObject, Visitor& 
       thisObject->m_JSMD4.visit(visitor);  visitor.append(thisObject->m_JSMD4SetterValue);
       thisObject->m_JSMD5.visit(visitor);  visitor.append(thisObject->m_JSMD5SetterValue);
       thisObject->m_JSMatchedRoute.visit(visitor);  visitor.append(thisObject->m_JSMatchedRouteSetterValue);
+      thisObject->m_JSMockFn.visit(visitor);  visitor.append(thisObject->m_JSMockFnSetterValue);
       thisObject->m_JSNodeJSFS.visit(visitor);  visitor.append(thisObject->m_JSNodeJSFSSetterValue);
       thisObject->m_JSRequest.visit(visitor);  visitor.append(thisObject->m_JSRequestSetterValue);
       thisObject->m_JSResolveMessage.visit(visitor);  visitor.append(thisObject->m_JSResolveMessageSetterValue);

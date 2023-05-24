@@ -15,6 +15,7 @@ pub const Classes = struct {
     pub const MD4 = JSC.API.Bun.Crypto.MD4;
     pub const MD5 = JSC.API.Bun.Crypto.MD5;
     pub const MatchedRoute = JSC.API.MatchedRoute;
+    pub const MockFn = JSC.Jest.MockFn;
     pub const NodeJSFS = JSC.Node.NodeJSFS;
     pub const Request = JSC.WebCore.Request;
     pub const Response = JSC.WebCore.Response;
