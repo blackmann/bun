@@ -1,4 +1,4 @@
-// Automatically generated from src/bun.js/bindings/JSSink.cpp using /home/gr/codes/bun/src/bun.js/WebKit/Source/JavaScriptCore/create_hash_table. DO NOT EDIT!
+// Automatically generated from src/bun.js/bindings/JSSink.cpp using /Users/yogr/Documents/codes/opensource/bun/src/bun.js/WebKit/Source/JavaScriptCore/create_hash_table. DO NOT EDIT!
 
 
 

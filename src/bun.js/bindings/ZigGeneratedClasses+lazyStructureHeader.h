@@ -46,6 +46,12 @@ JSC::Structure* JSFileSystemRouterStructure() { return m_JSFileSystemRouter.getI
   JSC::LazyClassStructure m_JSFileSystemRouter;
   bool hasJSFileSystemRouterSetterValue { false };
   mutable JSC::WriteBarrier<JSC::Unknown> m_JSFileSystemRouterSetterValue;
+JSC::Structure* JSFnStructure() { return m_JSFn.getInitializedOnMainThread(this); }
+        JSC::JSObject* JSFnConstructor() { return m_JSFn.constructorInitializedOnMainThread(this); }
+        JSC::JSValue JSFnPrototype() { return m_JSFn.prototypeInitializedOnMainThread(this); }
+  JSC::LazyClassStructure m_JSFn;
+  bool hasJSFnSetterValue { false };
+  mutable JSC::WriteBarrier<JSC::Unknown> m_JSFnSetterValue;
 JSC::Structure* JSListenerStructure() { return m_JSListener.getInitializedOnMainThread(this); }
         JSC::JSObject* JSListenerConstructor() { return m_JSListener.constructorInitializedOnMainThread(this); }
         JSC::JSValue JSListenerPrototype() { return m_JSListener.prototypeInitializedOnMainThread(this); }

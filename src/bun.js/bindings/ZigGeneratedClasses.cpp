@@ -4687,6 +4687,244 @@ void JSFileSystemRouter::visitOutputConstraintsImpl(JSCell* cell, Visitor& visit
 }
 
 DEFINE_VISIT_OUTPUT_CONSTRAINTS(JSFileSystemRouter);
+class JSFnPrototype final : public JSC::JSNonFinalObject {
+public:
+    using Base = JSC::JSNonFinalObject;
+
+    static JSFnPrototype* create(JSC::VM& vm, JSGlobalObject* globalObject, JSC::Structure* structure)
+    {
+        JSFnPrototype* ptr = new (NotNull, JSC::allocateCell<JSFnPrototype>(vm)) JSFnPrototype(vm, globalObject, structure);
+        ptr->finishCreation(vm, globalObject);
+        return ptr;
+    }
+
+    DECLARE_INFO;
+    template<typename CellType, JSC::SubspaceAccess>
+    static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        return &vm.plainObjectSpace();
+    }
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+    }
+
+private:
+    JSFnPrototype(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    void finishCreation(JSC::VM&, JSC::JSGlobalObject*);
+};
+
+class JSFnConstructor final : public JSC::InternalFunction {
+public:
+    using Base = JSC::InternalFunction;
+    static JSFnConstructor* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure, JSFnPrototype* prototype);
+
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
+    static constexpr bool needsDestruction = false;
+
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::InternalFunctionType, StructureFlags), info());
+    }
+
+    template<typename, JSC::SubspaceAccess mode> static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        if constexpr (mode == JSC::SubspaceAccess::Concurrently)
+            return nullptr;
+        return WebCore::subspaceForImpl<JSFnConstructor, WebCore::UseCustomHeapCellType::No>(
+            vm,
+            [](auto& spaces) { return spaces.m_clientSubspaceForFnConstructor.get(); },
+            [](auto& spaces, auto&& space) { spaces.m_clientSubspaceForFnConstructor = std::forward<decltype(space)>(space); },
+            [](auto& spaces) { return spaces.m_subspaceForFnConstructor.get(); },
+            [](auto& spaces, auto&& space) { spaces.m_subspaceForFnConstructor = std::forward<decltype(space)>(space); });
+    }
+
+    void initializeProperties(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSFnPrototype* prototype);
+
+    // Must be defined for each specialization class.
+    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES construct(JSC::JSGlobalObject*, JSC::CallFrame*);
+
+    DECLARE_EXPORT_INFO;
+
+private:
+    JSFnConstructor(JSC::VM& vm, JSC::Structure* structure);
+    void finishCreation(JSC::VM&, JSC::JSGlobalObject* globalObject, JSFnPrototype* prototype);
+};
+
+extern "C" void* FnClass__construct(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC_DECLARE_CUSTOM_GETTER(jsFnConstructor);
+
+extern "C" JSC_DECLARE_HOST_FUNCTION(FnClass__call);
+
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSFnPrototype, JSFnPrototype::Base);
+
+static const HashTableValue JSFnPrototypeTableValues[] = {};
+
+const ClassInfo JSFnPrototype::s_info = { "Fn"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFnPrototype) };
+
+JSC_DEFINE_CUSTOM_GETTER(jsFnConstructor, (JSGlobalObject * lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+{
+    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto* globalObject = reinterpret_cast<Zig::GlobalObject*>(lexicalGlobalObject);
+    auto* prototype = jsDynamicCast<JSFnPrototype*>(JSValue::decode(thisValue));
+
+    if (UNLIKELY(!prototype))
+        return throwVMTypeError(lexicalGlobalObject, throwScope);
+    return JSValue::encode(globalObject->JSFnConstructor());
+}
+
+void JSFnPrototype::finishCreation(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
+{
+    Base::finishCreation(vm);
+
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+}
+
+void JSFnConstructor::finishCreation(VM& vm, JSC::JSGlobalObject* globalObject, JSFnPrototype* prototype)
+{
+    Base::finishCreation(vm, 0, "Fn"_s, PropertyAdditionMode::WithoutStructureTransition);
+
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    ASSERT(inherits(info()));
+}
+
+JSFnConstructor::JSFnConstructor(JSC::VM& vm, JSC::Structure* structure)
+    : Base(vm, structure, FnClass__call, construct)
+{
+}
+
+JSFnConstructor* JSFnConstructor::create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure, JSFnPrototype* prototype)
+{
+    JSFnConstructor* ptr = new (NotNull, JSC::allocateCell<JSFnConstructor>(vm)) JSFnConstructor(vm, structure);
+    ptr->finishCreation(vm, globalObject, prototype);
+    return ptr;
+}
+
+JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSFnConstructor::construct(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame)
+{
+    Zig::GlobalObject* globalObject = reinterpret_cast<Zig::GlobalObject*>(lexicalGlobalObject);
+    JSC::VM& vm = globalObject->vm();
+    JSObject* newTarget = asObject(callFrame->newTarget());
+    auto* constructor = globalObject->JSFnConstructor();
+    Structure* structure = globalObject->JSFnStructure();
+    if (constructor != newTarget) {
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        auto* functionGlobalObject = reinterpret_cast<Zig::GlobalObject*>(
+            // ShadowRealm functions belong to a different global object.
+            getFunctionRealm(globalObject, newTarget));
+        RETURN_IF_EXCEPTION(scope, {});
+        structure = InternalFunction::createSubclassStructure(
+            globalObject,
+            newTarget,
+            functionGlobalObject->JSFnStructure());
+    }
+
+    void* ptr = FnClass__construct(globalObject, callFrame);
+
+    if (UNLIKELY(!ptr)) {
+        return JSValue::encode(JSC::jsUndefined());
+    }
+
+    JSFn* instance = JSFn::create(vm, globalObject, structure, ptr);
+
+    return JSValue::encode(instance);
+}
+
+void JSFnConstructor::initializeProperties(VM& vm, JSC::JSGlobalObject* globalObject, JSFnPrototype* prototype)
+{
+}
+
+const ClassInfo JSFnConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFnConstructor) };
+
+extern "C" EncodedJSValue Fn__getConstructor(Zig::GlobalObject* globalObject)
+{
+    return JSValue::encode(globalObject->JSFnConstructor());
+}
+
+JSFn::~JSFn()
+{
+}
+void JSFn::destroy(JSCell* cell)
+{
+    static_cast<JSFn*>(cell)->JSFn::~JSFn();
+}
+
+const ClassInfo JSFn::s_info = { "Fn"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFn) };
+
+void JSFn::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+}
+
+JSFn* JSFn::create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure, void* ctx)
+{
+    JSFn* ptr = new (NotNull, JSC::allocateCell<JSFn>(vm)) JSFn(vm, structure, ctx);
+    ptr->finishCreation(vm);
+    return ptr;
+}
+
+extern "C" void* Fn__fromJS(JSC::EncodedJSValue value)
+{
+    JSC::JSValue decodedValue = JSC::JSValue::decode(value);
+    if (decodedValue.isEmpty() || !decodedValue.isCell())
+        return nullptr;
+
+    JSC::JSCell* cell = decodedValue.asCell();
+    JSFn* object = JSC::jsDynamicCast<JSFn*>(cell);
+
+    if (!object)
+        return nullptr;
+
+    return object->wrapped();
+}
+
+extern "C" bool Fn__dangerouslySetPtr(JSC::EncodedJSValue value, void* ptr)
+{
+    JSFn* object = JSC::jsDynamicCast<JSFn*>(JSValue::decode(value));
+    if (!object)
+        return false;
+
+    object->m_ctx = ptr;
+    return true;
+}
+
+extern "C" const size_t Fn__ptrOffset = JSFn::offsetOfWrapped();
+
+void JSFn::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
+{
+    auto* thisObject = jsCast<JSFn*>(cell);
+    if (void* wrapped = thisObject->wrapped()) {
+        // if (thisObject->scriptExecutionContext())
+        //     analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
+    }
+    Base::analyzeHeap(cell, analyzer);
+}
+
+JSObject* JSFn::createConstructor(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return WebCore::JSFnConstructor::create(vm, globalObject, WebCore::JSFnConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<WebCore::JSFnPrototype*>(prototype));
+}
+
+JSObject* JSFn::createPrototype(VM& vm, JSDOMGlobalObject* globalObject)
+{
+    return JSFnPrototype::create(vm, globalObject, JSFnPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+}
+
+extern "C" EncodedJSValue Fn__create(Zig::GlobalObject* globalObject, void* ptr)
+{
+    auto& vm = globalObject->vm();
+    JSC::Structure* structure = globalObject->JSFnStructure();
+    JSFn* instance = JSFn::create(vm, globalObject, structure, ptr);
+
+    return JSValue::encode(instance);
+}
 class JSListenerPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
@@ -6288,18 +6526,9 @@ JSC_DECLARE_CUSTOM_GETTER(jsMockFnConstructor);
 extern "C" void MockFnClass__finalize(void*);
 extern "C" JSC_DECLARE_HOST_FUNCTION(MockFnClass__call);
 
-extern "C" EncodedJSValue MockFnPrototype__getMockName(void* ptr, JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame);
-JSC_DECLARE_HOST_FUNCTION(MockFnPrototype__getMockNameCallback);
-
-extern "C" EncodedJSValue MockFnPrototype__mockName(void* ptr, JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame);
-JSC_DECLARE_HOST_FUNCTION(MockFnPrototype__mockNameCallback);
-
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSMockFnPrototype, JSMockFnPrototype::Base);
 
-static const HashTableValue JSMockFnPrototypeTableValues[] = {
-    { "getMockName"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function | PropertyAttribute::DontDelete), NoIntrinsic, { HashTableValue::NativeFunctionType, MockFnPrototype__getMockNameCallback, 0 } },
-    { "mockName"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function | PropertyAttribute::DontDelete), NoIntrinsic, { HashTableValue::NativeFunctionType, MockFnPrototype__mockNameCallback, 1 } }
-};
+static const HashTableValue JSMockFnPrototypeTableValues[] = {};
 
 const ClassInfo JSMockFnPrototype::s_info = { "MockFn"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMockFnPrototype) };
 
@@ -6315,110 +6544,79 @@ JSC_DEFINE_CUSTOM_GETTER(jsMockFnConstructor, (JSGlobalObject * lexicalGlobalObj
     return JSValue::encode(globalObject->JSMockFnConstructor());
 }
 
-JSC_DEFINE_HOST_FUNCTION(MockFnPrototype__getMockNameCallback, (JSGlobalObject * lexicalGlobalObject, CallFrame* callFrame))
-{
-    auto& vm = lexicalGlobalObject->vm();
-
-    JSMockFn* thisObject = jsDynamicCast<JSMockFn*>(callFrame->thisValue());
-
-    if (UNLIKELY(!thisObject)) {
-        auto throwScope = DECLARE_THROW_SCOPE(vm);
-        return throwVMTypeError(lexicalGlobalObject, throwScope);
-    }
-
-    JSC::EnsureStillAliveScope thisArg = JSC::EnsureStillAliveScope(thisObject);
-
-#ifdef BUN_DEBUG
-    /** View the file name of the JS file that called this function
-     * from a debugger */
-    SourceOrigin sourceOrigin = callFrame->callerSourceOrigin(vm);
-    const char* fileName = sourceOrigin.string().utf8().data();
-    static const char* lastFileName = nullptr;
-    if (lastFileName != fileName) {
-        lastFileName = fileName;
-    }
-#endif
-
-    return MockFnPrototype__getMockName(thisObject->wrapped(), lexicalGlobalObject, callFrame);
-}
-
-JSC_DEFINE_HOST_FUNCTION(MockFnPrototype__mockNameCallback, (JSGlobalObject * lexicalGlobalObject, CallFrame* callFrame))
-{
-    auto& vm = lexicalGlobalObject->vm();
-
-    JSMockFn* thisObject = jsDynamicCast<JSMockFn*>(callFrame->thisValue());
-
-    if (UNLIKELY(!thisObject)) {
-        auto throwScope = DECLARE_THROW_SCOPE(vm);
-        return throwVMTypeError(lexicalGlobalObject, throwScope);
-    }
-
-    JSC::EnsureStillAliveScope thisArg = JSC::EnsureStillAliveScope(thisObject);
-
-#ifdef BUN_DEBUG
-    /** View the file name of the JS file that called this function
-     * from a debugger */
-    SourceOrigin sourceOrigin = callFrame->callerSourceOrigin(vm);
-    const char* fileName = sourceOrigin.string().utf8().data();
-    static const char* lastFileName = nullptr;
-    if (lastFileName != fileName) {
-        lastFileName = fileName;
-    }
-#endif
-
-    return MockFnPrototype__mockName(thisObject->wrapped(), lexicalGlobalObject, callFrame);
-}
-
-extern "C" void MockFnPrototype__argumentsSetCachedValue(JSC::EncodedJSValue thisValue, JSC::JSGlobalObject* globalObject, JSC::EncodedJSValue value)
+extern "C" void MockFnPrototype__callsSetCachedValue(JSC::EncodedJSValue thisValue, JSC::JSGlobalObject* globalObject, JSC::EncodedJSValue value)
 {
     auto& vm = globalObject->vm();
     auto* thisObject = jsCast<JSMockFn*>(JSValue::decode(thisValue));
-    thisObject->m_arguments.set(vm, thisObject, JSValue::decode(value));
+    thisObject->m_calls.set(vm, thisObject, JSValue::decode(value));
 }
 
-extern "C" EncodedJSValue MockFnPrototype__argumentsGetCachedValue(JSC::EncodedJSValue thisValue)
+extern "C" EncodedJSValue MockFnPrototype__callsGetCachedValue(JSC::EncodedJSValue thisValue)
 {
     auto* thisObject = jsCast<JSMockFn*>(JSValue::decode(thisValue));
-    return JSValue::encode(thisObject->m_arguments.get());
+    return JSValue::encode(thisObject->m_calls.get());
 }
 
-extern "C" void MockFnPrototype__contextSetCachedValue(JSC::EncodedJSValue thisValue, JSC::JSGlobalObject* globalObject, JSC::EncodedJSValue value)
-{
-    auto& vm = globalObject->vm();
-    auto* thisObject = jsCast<JSMockFn*>(JSValue::decode(thisValue));
-    thisObject->m_context.set(vm, thisObject, JSValue::decode(value));
-}
-
-extern "C" EncodedJSValue MockFnPrototype__contextGetCachedValue(JSC::EncodedJSValue thisValue)
-{
-    auto* thisObject = jsCast<JSMockFn*>(JSValue::decode(thisValue));
-    return JSValue::encode(thisObject->m_context.get());
-}
-
-extern "C" void MockFnPrototype__returnValuesSetCachedValue(JSC::EncodedJSValue thisValue, JSC::JSGlobalObject* globalObject, JSC::EncodedJSValue value)
+extern "C" void MockFnPrototype__contextsSetCachedValue(JSC::EncodedJSValue thisValue, JSC::JSGlobalObject* globalObject, JSC::EncodedJSValue value)
 {
     auto& vm = globalObject->vm();
     auto* thisObject = jsCast<JSMockFn*>(JSValue::decode(thisValue));
-    thisObject->m_returnValues.set(vm, thisObject, JSValue::decode(value));
+    thisObject->m_contexts.set(vm, thisObject, JSValue::decode(value));
 }
 
-extern "C" EncodedJSValue MockFnPrototype__returnValuesGetCachedValue(JSC::EncodedJSValue thisValue)
+extern "C" EncodedJSValue MockFnPrototype__contextsGetCachedValue(JSC::EncodedJSValue thisValue)
 {
     auto* thisObject = jsCast<JSMockFn*>(JSValue::decode(thisValue));
-    return JSValue::encode(thisObject->m_returnValues.get());
+    return JSValue::encode(thisObject->m_contexts.get());
+}
+
+extern "C" void MockFnPrototype__instancesSetCachedValue(JSC::EncodedJSValue thisValue, JSC::JSGlobalObject* globalObject, JSC::EncodedJSValue value)
+{
+    auto& vm = globalObject->vm();
+    auto* thisObject = jsCast<JSMockFn*>(JSValue::decode(thisValue));
+    thisObject->m_instances.set(vm, thisObject, JSValue::decode(value));
+}
+
+extern "C" EncodedJSValue MockFnPrototype__instancesGetCachedValue(JSC::EncodedJSValue thisValue)
+{
+    auto* thisObject = jsCast<JSMockFn*>(JSValue::decode(thisValue));
+    return JSValue::encode(thisObject->m_instances.get());
+}
+
+extern "C" void MockFnPrototype__resultsSetCachedValue(JSC::EncodedJSValue thisValue, JSC::JSGlobalObject* globalObject, JSC::EncodedJSValue value)
+{
+    auto& vm = globalObject->vm();
+    auto* thisObject = jsCast<JSMockFn*>(JSValue::decode(thisValue));
+    thisObject->m_results.set(vm, thisObject, JSValue::decode(value));
+}
+
+extern "C" EncodedJSValue MockFnPrototype__resultsGetCachedValue(JSC::EncodedJSValue thisValue)
+{
+    auto* thisObject = jsCast<JSMockFn*>(JSValue::decode(thisValue));
+    return JSValue::encode(thisObject->m_results.get());
 }
 
 void JSMockFnPrototype::finishCreation(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSMockFn::info(), JSMockFnPrototypeTableValues, *this);
+
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
+
+extern "C" JSC_DECLARE_HOST_FUNCTION(MockFnClass__getMockName);
+extern "C" JSC_DECLARE_HOST_FUNCTION(MockFnClass__mockImplementation);
+extern "C" JSC_DECLARE_HOST_FUNCTION(MockFnClass__mockName);
+
+static const HashTableValue JSMockFnConstructorTableValues[] = {
+    { "getMockName"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function | PropertyAttribute::DontDelete), NoIntrinsic, { HashTableValue::NativeFunctionType, MockFnClass__getMockName, 0 } },
+    { "mockImplementation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function | PropertyAttribute::DontDelete), NoIntrinsic, { HashTableValue::NativeFunctionType, MockFnClass__mockImplementation, 1 } },
+    { "mockName"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function | PropertyAttribute::DontDelete), NoIntrinsic, { HashTableValue::NativeFunctionType, MockFnClass__mockName, 1 } }
+};
 
 void JSMockFnConstructor::finishCreation(VM& vm, JSC::JSGlobalObject* globalObject, JSMockFnPrototype* prototype)
 {
     Base::finishCreation(vm, 0, "MockFn"_s, PropertyAdditionMode::WithoutStructureTransition);
-
+    reifyStaticProperties(vm, &JSMockFnConstructor::s_info, JSMockFnConstructorTableValues, *this);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     ASSERT(inherits(info()));
 }
@@ -6565,9 +6763,10 @@ void JSMockFn::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     JSMockFn* thisObject = jsCast<JSMockFn*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_arguments);
-    visitor.append(thisObject->m_context);
-    visitor.append(thisObject->m_returnValues);
+    visitor.append(thisObject->m_calls);
+    visitor.append(thisObject->m_contexts);
+    visitor.append(thisObject->m_instances);
+    visitor.append(thisObject->m_results);
 }
 
 DEFINE_VISIT_CHILDREN(JSMockFn);
@@ -6577,9 +6776,10 @@ void JSMockFn::visitAdditionalChildren(Visitor& visitor)
 {
     JSMockFn* thisObject = this;
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    visitor.append(thisObject->m_arguments);
-    visitor.append(thisObject->m_context);
-    visitor.append(thisObject->m_returnValues);
+    visitor.append(thisObject->m_calls);
+    visitor.append(thisObject->m_contexts);
+    visitor.append(thisObject->m_instances);
+    visitor.append(thisObject->m_results);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSMockFn);

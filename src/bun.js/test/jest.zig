@@ -3685,7 +3685,7 @@ pub const DescribeScope = struct {
             // describe("foo", () => {}).describe("bar") will wrok
             .describe = .{ .get = createDescribe, .name = "describe" },
             .it = .{ .get = createTest, .name = "it" },
-            .@"fn" = .{ .get = createMockFn, .name = "fn" },
+            .@"fn" = .{ .get = createFn, .name = "fn" },
             .@"test" = .{ .get = createTest, .name = "test" },
         },
     );
@@ -4038,14 +4038,14 @@ pub const DescribeScope = struct {
         return DescribeScope.Class.make(ctx, this);
     }
 
-    pub fn createMockFn(
+    pub fn createFn(
         _: *DescribeScope,
         ctx: js.JSContextRef,
         _: js.JSValueRef,
         _: js.JSStringRef,
         _: js.ExceptionRef,
     ) js.JSObjectRef {
-        return JSC.Jest.MockFn.getConstructor(ctx).asObjectRef();
+        return JSC.Jest.Fn.getConstructor(ctx).asObjectRef();
     }
 };
 
@@ -4274,24 +4274,45 @@ pub const TestRunnerTask = struct {
     }
 };
 
+pub const Fn = struct {
+    pub usingnamespace JSC.Codegen.JSFn;
+
+    pub fn call(
+        globalObject: *JSC.JSGlobalObject,
+        _: *JSC.CallFrame,
+    ) callconv(.C) JSC.JSValue {
+        return JSC.Jest.MockFn.getConstructor(globalObject);
+    }
+
+    pub fn constructor(
+        _: *JSC.JSGlobalObject,
+        _: *JSC.CallFrame,
+    ) callconv(.C) ?*Fn {
+        return null;
+    }
+};
+
 pub const MockFn = struct {
-    name: string = "bun.fn()",
+    name: string,
 
     pub usingnamespace JSC.Codegen.JSMockFn;
 
     pub fn call(
-        _: *JSC.JSGlobalObject,
+        globalObject: *JSC.JSGlobalObject,
         _: *JSC.CallFrame,
     ) callconv(.C) JSC.JSValue {
-        return .zero;
+        const mockfn = globalObject.bunVM().allocator.create(MockFn) catch unreachable;
+        mockfn.* = .{ .name = "bun.fn()" };
+        const mockfn_js = mockfn.toJS(globalObject);
+        mockfn_js.ensureStillAlive();
+
+        return mockfn_js;
     }
 
     pub fn constructor(
-        globalObject: *JSC.JSGlobalObject,
-        callframe: *JSC.CallFrame,
+        _: *JSC.JSGlobalObject,
+        _: *JSC.CallFrame,
     ) callconv(.C) ?*MockFn {
-        _ = callframe.arguments(1);
-        globalObject.throw("bun.fn() cannot be called with new", .{});
         return null;
     }
 
@@ -4301,11 +4322,15 @@ pub const MockFn = struct {
         VirtualMachine.get().allocator.destroy(this);
     }
 
-    pub fn getMockName(_: *MockFn, _: *JSC.JSGlobalObject, _: *JSC.CallFrame) callconv(.C) JSC.JSValue {
+    pub fn getMockName(ctx: *JSC.JSGlobalObject, _: *JSC.CallFrame) callconv(.C) JSC.JSValue {
+        return JSC.ZigString.fromUTF8("bun.fn").withEncoding().toValueAuto(ctx);
+    }
+
+    pub fn mockImplementation(_: *JSC.JSGlobalObject, _: *JSC.CallFrame) callconv(.C) JSC.JSValue {
         return .zero;
     }
 
-    pub fn mockName(_: *MockFn, _: *JSC.JSGlobalObject, _: *JSC.CallFrame) callconv(.C) JSC.JSValue {
+    pub fn mockName(_: *JSC.JSGlobalObject, _: *JSC.CallFrame) callconv(.C) JSC.JSValue {
         return .zero;
     }
 };

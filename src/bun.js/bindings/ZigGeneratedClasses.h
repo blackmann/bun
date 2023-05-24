@@ -474,6 +474,56 @@ public:
     mutable JSC::WriteBarrier<JSC::Unknown> m_style;
 };
 
+class JSFn final : public JSC::JSDestructibleObject {
+public:
+    using Base = JSC::JSDestructibleObject;
+    static JSFn* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure, void* ctx);
+
+    DECLARE_EXPORT_INFO;
+    template<typename, JSC::SubspaceAccess mode> static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        if constexpr (mode == JSC::SubspaceAccess::Concurrently)
+            return nullptr;
+        return WebCore::subspaceForImpl<JSFn, WebCore::UseCustomHeapCellType::No>(
+            vm,
+            [](auto& spaces) { return spaces.m_clientSubspaceForFn.get(); },
+            [](auto& spaces, auto&& space) { spaces.m_clientSubspaceForFn = std::forward<decltype(space)>(space); },
+            [](auto& spaces) { return spaces.m_subspaceForFn.get(); },
+            [](auto& spaces, auto&& space) { spaces.m_subspaceForFn = std::forward<decltype(space)>(space); });
+    }
+
+    static void destroy(JSC::JSCell*);
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(static_cast<JSC::JSType>(ObjectType), StructureFlags), info());
+    }
+
+    static JSObject* createPrototype(VM& vm, JSDOMGlobalObject* globalObject);
+    static JSObject* createConstructor(VM& vm, JSGlobalObject* globalObject, JSValue prototype);
+
+    ~JSFn();
+
+    void* wrapped() const { return m_ctx; }
+
+    void detach()
+    {
+        m_ctx = nullptr;
+    }
+
+    static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
+    static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSFn, m_ctx); }
+
+    void* m_ctx { nullptr };
+
+    JSFn(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
+        : Base(vm, structure)
+    {
+        m_ctx = sinkPtr;
+    }
+
+    void finishCreation(JSC::VM&);
+};
+
 class JSListener final : public JSC::JSDestructibleObject {
 public:
     using Base = JSC::JSDestructibleObject;
@@ -746,9 +796,10 @@ public:
     template<typename Visitor> void visitAdditionalChildren(Visitor&);
     DECLARE_VISIT_OUTPUT_CONSTRAINTS;
 
-    mutable JSC::WriteBarrier<JSC::Unknown> m_arguments;
-    mutable JSC::WriteBarrier<JSC::Unknown> m_context;
-    mutable JSC::WriteBarrier<JSC::Unknown> m_returnValues;
+    mutable JSC::WriteBarrier<JSC::Unknown> m_calls;
+    mutable JSC::WriteBarrier<JSC::Unknown> m_contexts;
+    mutable JSC::WriteBarrier<JSC::Unknown> m_instances;
+    mutable JSC::WriteBarrier<JSC::Unknown> m_results;
 };
 
 class JSNodeJSFS final : public JSC::JSDestructibleObject {

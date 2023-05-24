@@ -1271,6 +1271,72 @@ pub const JSFileSystemRouter = struct {
         }
     }
 };
+pub const JSFn = struct {
+    const Fn = Classes.Fn;
+    const GetterType = fn (*Fn, *JSC.JSGlobalObject) callconv(.C) JSC.JSValue;
+    const GetterTypeWithThisValue = fn (*Fn, JSC.JSValue, *JSC.JSGlobalObject) callconv(.C) JSC.JSValue;
+    const SetterType = fn (*Fn, *JSC.JSGlobalObject, JSC.JSValue) callconv(.C) bool;
+    const SetterTypeWithThisValue = fn (*Fn, JSC.JSValue, *JSC.JSGlobalObject, JSC.JSValue) callconv(.C) bool;
+    const CallbackType = fn (*Fn, *JSC.JSGlobalObject, *JSC.CallFrame) callconv(.C) JSC.JSValue;
+
+    /// Return the pointer to the wrapped object.
+    /// If the object does not match the type, return null.
+    pub fn fromJS(value: JSC.JSValue) ?*Fn {
+        JSC.markBinding(@src());
+        return Fn__fromJS(value);
+    }
+
+    /// Get the Fn constructor value.
+    /// This loads lazily from the global object.
+    pub fn getConstructor(globalObject: *JSC.JSGlobalObject) JSC.JSValue {
+        JSC.markBinding(@src());
+        return Fn__getConstructor(globalObject);
+    }
+
+    /// Create a new instance of Fn
+    pub fn toJS(this: *Fn, globalObject: *JSC.JSGlobalObject) JSC.JSValue {
+        JSC.markBinding(@src());
+        if (comptime Environment.allow_assert) {
+            const value__ = Fn__create(globalObject, this);
+            std.debug.assert(value__.as(Fn).? == this); // If this fails, likely a C ABI issue.
+            return value__;
+        } else {
+            return Fn__create(globalObject, this);
+        }
+    }
+
+    /// Modify the internal ptr to point to a new instance of Fn.
+    pub fn dangerouslySetPtr(value: JSC.JSValue, ptr: ?*Fn) bool {
+        JSC.markBinding(@src());
+        return Fn__dangerouslySetPtr(value, ptr);
+    }
+
+    /// Detach the ptr from the thisValue
+    pub fn detachPtr(_: *Fn, value: JSC.JSValue) void {
+        JSC.markBinding(@src());
+        std.debug.assert(Fn__dangerouslySetPtr(value, null));
+    }
+
+    extern fn Fn__fromJS(JSC.JSValue) ?*Fn;
+    extern fn Fn__getConstructor(*JSC.JSGlobalObject) JSC.JSValue;
+
+    extern fn Fn__create(globalObject: *JSC.JSGlobalObject, ptr: ?*Fn) JSC.JSValue;
+
+    extern fn Fn__dangerouslySetPtr(JSC.JSValue, ?*Fn) bool;
+
+    comptime {
+        if (@TypeOf(Fn.constructor) != (fn (*JSC.JSGlobalObject, *JSC.CallFrame) callconv(.C) ?*Fn)) {
+            @compileLog("Fn.constructor is not a constructor");
+        }
+
+        if (@TypeOf(Fn.call) != StaticCallbackType)
+            @compileLog("Expected Fn.call to be a static callback");
+        if (!JSC.is_bindgen) {
+            @export(Fn.call, .{ .name = "FnClass__call" });
+            @export(Fn.constructor, .{ .name = "FnClass__construct" });
+        }
+    }
+};
 pub const JSListener = struct {
     const Listener = Classes.Listener;
     const GetterType = fn (*Listener, *JSC.JSGlobalObject) callconv(.C) JSC.JSValue;
@@ -1828,66 +1894,88 @@ pub const JSMockFn = struct {
         return MockFn__fromJS(value);
     }
 
-    extern fn MockFnPrototype__argumentsSetCachedValue(JSC.JSValue, *JSC.JSGlobalObject, JSC.JSValue) void;
+    extern fn MockFnPrototype__callsSetCachedValue(JSC.JSValue, *JSC.JSGlobalObject, JSC.JSValue) void;
 
-    extern fn MockFnPrototype__argumentsGetCachedValue(JSC.JSValue) JSC.JSValue;
+    extern fn MockFnPrototype__callsGetCachedValue(JSC.JSValue) JSC.JSValue;
 
-    /// `MockFn.arguments` setter
+    /// `MockFn.calls` setter
     /// This value will be visited by the garbage collector.
-    pub fn argumentsSetCached(thisValue: JSC.JSValue, globalObject: *JSC.JSGlobalObject, value: JSC.JSValue) void {
+    pub fn callsSetCached(thisValue: JSC.JSValue, globalObject: *JSC.JSGlobalObject, value: JSC.JSValue) void {
         JSC.markBinding(@src());
-        MockFnPrototype__argumentsSetCachedValue(thisValue, globalObject, value);
+        MockFnPrototype__callsSetCachedValue(thisValue, globalObject, value);
     }
 
-    /// `MockFn.arguments` getter
+    /// `MockFn.calls` getter
     /// This value will be visited by the garbage collector.
-    pub fn argumentsGetCached(thisValue: JSC.JSValue) ?JSC.JSValue {
+    pub fn callsGetCached(thisValue: JSC.JSValue) ?JSC.JSValue {
         JSC.markBinding(@src());
-        const result = MockFnPrototype__argumentsGetCachedValue(thisValue);
+        const result = MockFnPrototype__callsGetCachedValue(thisValue);
         if (result == .zero)
             return null;
 
         return result;
     }
 
-    extern fn MockFnPrototype__contextSetCachedValue(JSC.JSValue, *JSC.JSGlobalObject, JSC.JSValue) void;
+    extern fn MockFnPrototype__contextsSetCachedValue(JSC.JSValue, *JSC.JSGlobalObject, JSC.JSValue) void;
 
-    extern fn MockFnPrototype__contextGetCachedValue(JSC.JSValue) JSC.JSValue;
+    extern fn MockFnPrototype__contextsGetCachedValue(JSC.JSValue) JSC.JSValue;
 
-    /// `MockFn.context` setter
+    /// `MockFn.contexts` setter
     /// This value will be visited by the garbage collector.
-    pub fn contextSetCached(thisValue: JSC.JSValue, globalObject: *JSC.JSGlobalObject, value: JSC.JSValue) void {
+    pub fn contextsSetCached(thisValue: JSC.JSValue, globalObject: *JSC.JSGlobalObject, value: JSC.JSValue) void {
         JSC.markBinding(@src());
-        MockFnPrototype__contextSetCachedValue(thisValue, globalObject, value);
+        MockFnPrototype__contextsSetCachedValue(thisValue, globalObject, value);
     }
 
-    /// `MockFn.context` getter
+    /// `MockFn.contexts` getter
     /// This value will be visited by the garbage collector.
-    pub fn contextGetCached(thisValue: JSC.JSValue) ?JSC.JSValue {
+    pub fn contextsGetCached(thisValue: JSC.JSValue) ?JSC.JSValue {
         JSC.markBinding(@src());
-        const result = MockFnPrototype__contextGetCachedValue(thisValue);
+        const result = MockFnPrototype__contextsGetCachedValue(thisValue);
         if (result == .zero)
             return null;
 
         return result;
     }
 
-    extern fn MockFnPrototype__returnValuesSetCachedValue(JSC.JSValue, *JSC.JSGlobalObject, JSC.JSValue) void;
+    extern fn MockFnPrototype__instancesSetCachedValue(JSC.JSValue, *JSC.JSGlobalObject, JSC.JSValue) void;
 
-    extern fn MockFnPrototype__returnValuesGetCachedValue(JSC.JSValue) JSC.JSValue;
+    extern fn MockFnPrototype__instancesGetCachedValue(JSC.JSValue) JSC.JSValue;
 
-    /// `MockFn.returnValues` setter
+    /// `MockFn.instances` setter
     /// This value will be visited by the garbage collector.
-    pub fn returnValuesSetCached(thisValue: JSC.JSValue, globalObject: *JSC.JSGlobalObject, value: JSC.JSValue) void {
+    pub fn instancesSetCached(thisValue: JSC.JSValue, globalObject: *JSC.JSGlobalObject, value: JSC.JSValue) void {
         JSC.markBinding(@src());
-        MockFnPrototype__returnValuesSetCachedValue(thisValue, globalObject, value);
+        MockFnPrototype__instancesSetCachedValue(thisValue, globalObject, value);
     }
 
-    /// `MockFn.returnValues` getter
+    /// `MockFn.instances` getter
     /// This value will be visited by the garbage collector.
-    pub fn returnValuesGetCached(thisValue: JSC.JSValue) ?JSC.JSValue {
+    pub fn instancesGetCached(thisValue: JSC.JSValue) ?JSC.JSValue {
         JSC.markBinding(@src());
-        const result = MockFnPrototype__returnValuesGetCachedValue(thisValue);
+        const result = MockFnPrototype__instancesGetCachedValue(thisValue);
+        if (result == .zero)
+            return null;
+
+        return result;
+    }
+
+    extern fn MockFnPrototype__resultsSetCachedValue(JSC.JSValue, *JSC.JSGlobalObject, JSC.JSValue) void;
+
+    extern fn MockFnPrototype__resultsGetCachedValue(JSC.JSValue) JSC.JSValue;
+
+    /// `MockFn.results` setter
+    /// This value will be visited by the garbage collector.
+    pub fn resultsSetCached(thisValue: JSC.JSValue, globalObject: *JSC.JSGlobalObject, value: JSC.JSValue) void {
+        JSC.markBinding(@src());
+        MockFnPrototype__resultsSetCachedValue(thisValue, globalObject, value);
+    }
+
+    /// `MockFn.results` getter
+    /// This value will be visited by the garbage collector.
+    pub fn resultsGetCached(thisValue: JSC.JSValue) ?JSC.JSValue {
+        JSC.markBinding(@src());
+        const result = MockFnPrototype__resultsGetCachedValue(thisValue);
         if (result == .zero)
             return null;
 
@@ -1941,18 +2029,21 @@ pub const JSMockFn = struct {
             @compileLog("MockFn.finalize is not a finalizer");
         }
 
-        if (@TypeOf(MockFn.getMockName) != CallbackType)
-            @compileLog("Expected MockFn.getMockName to be a callback but received " ++ @typeName(@TypeOf(MockFn.getMockName)));
-        if (@TypeOf(MockFn.mockName) != CallbackType)
-            @compileLog("Expected MockFn.mockName to be a callback but received " ++ @typeName(@TypeOf(MockFn.mockName)));
+        if (@TypeOf(MockFn.getMockName) != StaticCallbackType)
+            @compileLog("Expected MockFn.getMockName to be a static callback");
+        if (@TypeOf(MockFn.mockImplementation) != StaticCallbackType)
+            @compileLog("Expected MockFn.mockImplementation to be a static callback");
+        if (@TypeOf(MockFn.mockName) != StaticCallbackType)
+            @compileLog("Expected MockFn.mockName to be a static callback");
         if (@TypeOf(MockFn.call) != StaticCallbackType)
             @compileLog("Expected MockFn.call to be a static callback");
         if (!JSC.is_bindgen) {
             @export(MockFn.call, .{ .name = "MockFnClass__call" });
             @export(MockFn.constructor, .{ .name = "MockFnClass__construct" });
             @export(MockFn.finalize, .{ .name = "MockFnClass__finalize" });
-            @export(MockFn.getMockName, .{ .name = "MockFnPrototype__getMockName" });
-            @export(MockFn.mockName, .{ .name = "MockFnPrototype__mockName" });
+            @export(MockFn.getMockName, .{ .name = "MockFnClass__getMockName" });
+            @export(MockFn.mockImplementation, .{ .name = "MockFnClass__mockImplementation" });
+            @export(MockFn.mockName, .{ .name = "MockFnClass__mockName" });
         }
     }
 };
@@ -4709,6 +4800,7 @@ comptime {
     _ = JSExpect;
     _ = JSExpectAny;
     _ = JSFileSystemRouter;
+    _ = JSFn;
     _ = JSListener;
     _ = JSMD4;
     _ = JSMD5;
