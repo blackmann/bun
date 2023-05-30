@@ -3780,6 +3780,56 @@ pub const JSStats = struct {
         }
     }
 };
+pub const JSStringContaining = struct {
+    const StringContaining = Classes.StringContaining;
+    const GetterType = fn (*StringContaining, *JSC.JSGlobalObject) callconv(.C) JSC.JSValue;
+    const GetterTypeWithThisValue = fn (*StringContaining, JSC.JSValue, *JSC.JSGlobalObject) callconv(.C) JSC.JSValue;
+    const SetterType = fn (*StringContaining, *JSC.JSGlobalObject, JSC.JSValue) callconv(.C) bool;
+    const SetterTypeWithThisValue = fn (*StringContaining, JSC.JSValue, *JSC.JSGlobalObject, JSC.JSValue) callconv(.C) bool;
+    const CallbackType = fn (*StringContaining, *JSC.JSGlobalObject, *JSC.CallFrame) callconv(.C) JSC.JSValue;
+
+    /// Return the pointer to the wrapped object.
+    /// If the object does not match the type, return null.
+    pub fn fromJS(value: JSC.JSValue) ?*StringContaining {
+        JSC.markBinding(@src());
+        return StringContaining__fromJS(value);
+    }
+
+    /// Create a new instance of StringContaining
+    pub fn toJS(this: *StringContaining, globalObject: *JSC.JSGlobalObject) JSC.JSValue {
+        JSC.markBinding(@src());
+        if (comptime Environment.allow_assert) {
+            const value__ = StringContaining__create(globalObject, this);
+            std.debug.assert(value__.as(StringContaining).? == this); // If this fails, likely a C ABI issue.
+            return value__;
+        } else {
+            return StringContaining__create(globalObject, this);
+        }
+    }
+
+    /// Modify the internal ptr to point to a new instance of StringContaining.
+    pub fn dangerouslySetPtr(value: JSC.JSValue, ptr: ?*StringContaining) bool {
+        JSC.markBinding(@src());
+        return StringContaining__dangerouslySetPtr(value, ptr);
+    }
+
+    /// Detach the ptr from the thisValue
+    pub fn detachPtr(_: *StringContaining, value: JSC.JSValue) void {
+        JSC.markBinding(@src());
+        std.debug.assert(StringContaining__dangerouslySetPtr(value, null));
+    }
+
+    extern fn StringContaining__fromJS(JSC.JSValue) ?*StringContaining;
+    extern fn StringContaining__getConstructor(*JSC.JSGlobalObject) JSC.JSValue;
+
+    extern fn StringContaining__create(globalObject: *JSC.JSGlobalObject, ptr: ?*StringContaining) JSC.JSValue;
+
+    extern fn StringContaining__dangerouslySetPtr(JSC.JSValue, ?*StringContaining) bool;
+
+    comptime {
+        if (!JSC.is_bindgen) {}
+    }
+};
 pub const JSSubprocess = struct {
     const Subprocess = Classes.Subprocess;
     const GetterType = fn (*Subprocess, *JSC.JSGlobalObject) callconv(.C) JSC.JSValue;
@@ -4585,6 +4635,7 @@ comptime {
     _ = JSSHA512_256;
     _ = JSServerWebSocket;
     _ = JSStats;
+    _ = JSStringContaining;
     _ = JSSubprocess;
     _ = JSTCPSocket;
     _ = JSTLSSocket;

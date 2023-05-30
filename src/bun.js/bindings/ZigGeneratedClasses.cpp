@@ -14836,6 +14836,123 @@ void JSStats::visitOutputConstraintsImpl(JSCell* cell, Visitor& visitor)
 }
 
 DEFINE_VISIT_OUTPUT_CONSTRAINTS(JSStats);
+class JSStringContainingPrototype final : public JSC::JSNonFinalObject {
+public:
+    using Base = JSC::JSNonFinalObject;
+
+    static JSStringContainingPrototype* create(JSC::VM& vm, JSGlobalObject* globalObject, JSC::Structure* structure)
+    {
+        JSStringContainingPrototype* ptr = new (NotNull, JSC::allocateCell<JSStringContainingPrototype>(vm)) JSStringContainingPrototype(vm, globalObject, structure);
+        ptr->finishCreation(vm, globalObject);
+        return ptr;
+    }
+
+    DECLARE_INFO;
+    template<typename CellType, JSC::SubspaceAccess>
+    static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        return &vm.plainObjectSpace();
+    }
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+    }
+
+private:
+    JSStringContainingPrototype(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    void finishCreation(JSC::VM&, JSC::JSGlobalObject*);
+};
+
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSStringContainingPrototype, JSStringContainingPrototype::Base);
+
+static const HashTableValue JSStringContainingPrototypeTableValues[] = {};
+
+const ClassInfo JSStringContainingPrototype::s_info = { "StringContaining"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSStringContainingPrototype) };
+
+void JSStringContainingPrototype::finishCreation(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
+{
+    Base::finishCreation(vm);
+
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+}
+
+JSStringContaining::~JSStringContaining()
+{
+}
+void JSStringContaining::destroy(JSCell* cell)
+{
+    static_cast<JSStringContaining*>(cell)->JSStringContaining::~JSStringContaining();
+}
+
+const ClassInfo JSStringContaining::s_info = { "StringContaining"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSStringContaining) };
+
+void JSStringContaining::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+}
+
+JSStringContaining* JSStringContaining::create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure, void* ctx)
+{
+    JSStringContaining* ptr = new (NotNull, JSC::allocateCell<JSStringContaining>(vm)) JSStringContaining(vm, structure, ctx);
+    ptr->finishCreation(vm);
+    return ptr;
+}
+
+extern "C" void* StringContaining__fromJS(JSC::EncodedJSValue value)
+{
+    JSC::JSValue decodedValue = JSC::JSValue::decode(value);
+    if (decodedValue.isEmpty() || !decodedValue.isCell())
+        return nullptr;
+
+    JSC::JSCell* cell = decodedValue.asCell();
+    JSStringContaining* object = JSC::jsDynamicCast<JSStringContaining*>(cell);
+
+    if (!object)
+        return nullptr;
+
+    return object->wrapped();
+}
+
+extern "C" bool StringContaining__dangerouslySetPtr(JSC::EncodedJSValue value, void* ptr)
+{
+    JSStringContaining* object = JSC::jsDynamicCast<JSStringContaining*>(JSValue::decode(value));
+    if (!object)
+        return false;
+
+    object->m_ctx = ptr;
+    return true;
+}
+
+extern "C" const size_t StringContaining__ptrOffset = JSStringContaining::offsetOfWrapped();
+
+void JSStringContaining::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
+{
+    auto* thisObject = jsCast<JSStringContaining*>(cell);
+    if (void* wrapped = thisObject->wrapped()) {
+        // if (thisObject->scriptExecutionContext())
+        //     analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
+    }
+    Base::analyzeHeap(cell, analyzer);
+}
+
+JSObject* JSStringContaining::createPrototype(VM& vm, JSDOMGlobalObject* globalObject)
+{
+    return JSStringContainingPrototype::create(vm, globalObject, JSStringContainingPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+}
+
+extern "C" EncodedJSValue StringContaining__create(Zig::GlobalObject* globalObject, void* ptr)
+{
+    auto& vm = globalObject->vm();
+    JSC::Structure* structure = globalObject->JSStringContainingStructure();
+    JSStringContaining* instance = JSStringContaining::create(vm, globalObject, structure, ptr);
+
+    return JSValue::encode(instance);
+}
 class JSSubprocessPrototype final : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;

@@ -142,6 +142,12 @@ JSC::Structure* JSStatsStructure() { return m_JSStats.getInitializedOnMainThread
   JSC::LazyClassStructure m_JSStats;
   bool hasJSStatsSetterValue { false };
   mutable JSC::WriteBarrier<JSC::Unknown> m_JSStatsSetterValue;
+JSC::Structure* JSStringContainingStructure() { return m_JSStringContaining.getInitializedOnMainThread(this); }
+        JSC::JSObject* JSStringContainingConstructor() { return m_JSStringContaining.constructorInitializedOnMainThread(this); }
+        JSC::JSValue JSStringContainingPrototype() { return m_JSStringContaining.prototypeInitializedOnMainThread(this); }
+  JSC::LazyClassStructure m_JSStringContaining;
+  bool hasJSStringContainingSetterValue { false };
+  mutable JSC::WriteBarrier<JSC::Unknown> m_JSStringContainingSetterValue;
 JSC::Structure* JSSubprocessStructure() { return m_JSSubprocess.getInitializedOnMainThread(this); }
         JSC::JSObject* JSSubprocessConstructor() { return m_JSSubprocess.constructorInitializedOnMainThread(this); }
         JSC::JSValue JSSubprocessPrototype() { return m_JSSubprocess.prototypeInitializedOnMainThread(this); }

@@ -236,4 +236,11 @@ export default [
       },
     },
   }),
+  define({
+    name: 'StringContaining',
+    construct: false,
+    noConstructor: true,
+    proto: {},
+    klass: {}
+  })
 ];

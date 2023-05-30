@@ -56,8 +56,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSBlob(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -113,8 +111,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSBuildArtifact, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSBuildArtifact(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
@@ -177,8 +173,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSBuildMessage(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -237,8 +231,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSCryptoHasher(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -296,8 +288,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSDirent(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -353,8 +343,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSExpect, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSExpect(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
@@ -413,8 +401,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSExpectAny(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -470,8 +456,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSFileSystemRouter, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSFileSystemRouter(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
@@ -531,8 +515,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSListener(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -590,8 +572,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSMD4(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -642,8 +622,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSMD5(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -693,8 +671,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSMatchedRoute, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSMatchedRoute(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
@@ -758,8 +734,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSNodeJSFS(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -809,8 +783,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSRequest, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSRequest(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
@@ -870,8 +842,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSResolveMessage, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSResolveMessage(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
@@ -934,8 +904,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSResponse(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -995,8 +963,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSSHA1(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -1046,8 +1012,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSSHA224, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSSHA224(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
@@ -1099,8 +1063,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSSHA256(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -1150,8 +1112,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSSHA384, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSSHA384(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
@@ -1203,8 +1163,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSSHA512(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -1255,8 +1213,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSSHA512_256(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -1306,8 +1262,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSServerWebSocket, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSServerWebSocket(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
@@ -1366,8 +1320,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSStats(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -1383,6 +1335,56 @@ public:
     mutable JSC::WriteBarrier<JSC::Unknown> m_atime;
     mutable JSC::WriteBarrier<JSC::Unknown> m_ctime;
     mutable JSC::WriteBarrier<JSC::Unknown> m_mtime;
+};
+
+class JSStringContaining final : public JSC::JSDestructibleObject {
+public:
+    using Base = JSC::JSDestructibleObject;
+    static JSStringContaining* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure, void* ctx);
+
+    DECLARE_EXPORT_INFO;
+    template<typename, JSC::SubspaceAccess mode> static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
+    {
+        if constexpr (mode == JSC::SubspaceAccess::Concurrently)
+            return nullptr;
+        return WebCore::subspaceForImpl<JSStringContaining, WebCore::UseCustomHeapCellType::No>(
+            vm,
+            [](auto& spaces) { return spaces.m_clientSubspaceForStringContaining.get(); },
+            [](auto& spaces, auto&& space) { spaces.m_clientSubspaceForStringContaining = std::forward<decltype(space)>(space); },
+            [](auto& spaces) { return spaces.m_subspaceForStringContaining.get(); },
+            [](auto& spaces, auto&& space) { spaces.m_subspaceForStringContaining = std::forward<decltype(space)>(space); });
+    }
+
+    static void destroy(JSC::JSCell*);
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(static_cast<JSC::JSType>(ObjectType), StructureFlags), info());
+    }
+
+    static JSObject* createPrototype(VM& vm, JSDOMGlobalObject* globalObject);
+    ;
+
+    ~JSStringContaining();
+
+    void* wrapped() const { return m_ctx; }
+
+    void detach()
+    {
+        m_ctx = nullptr;
+    }
+
+    static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
+    static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSStringContaining, m_ctx); }
+
+    void* m_ctx { nullptr };
+
+    JSStringContaining(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
+        : Base(vm, structure)
+    {
+        m_ctx = sinkPtr;
+    }
+
+    void finishCreation(JSC::VM&);
 };
 
 class JSSubprocess final : public JSC::JSDestructibleObject {
@@ -1425,8 +1427,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSSubprocess, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSSubprocess(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
@@ -1513,8 +1513,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSTCPSocket(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -1598,8 +1596,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSTLSSocket, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSTLSSocket(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
@@ -1685,8 +1681,6 @@ public:
 
     void* m_ctx { nullptr };
 
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
-
     JSTextDecoder(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
     {
@@ -1742,8 +1736,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSTimeout, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSTimeout(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)
@@ -1801,8 +1793,6 @@ public:
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSTranspiler, m_ctx); }
 
     void* m_ctx { nullptr };
-
-    static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES call(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     JSTranspiler(JSC::VM& vm, JSC::Structure* structure, void* sinkPtr)
         : Base(vm, structure)

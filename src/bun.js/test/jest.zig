@@ -1739,7 +1739,13 @@ pub const Expect = struct {
         value.ensureStillAlive();
 
         const not = this.op.contains(.not);
-        var pass = value.deepEquals(expected, globalObject);
+
+        var pass = false;
+        if (Expect.match(globalObject, expected)) |result| {
+            pass = result;
+        } else {
+            pass = value.deepEquals(expected, globalObject);
+        }
 
         if (not) pass = !pass;
         if (pass) return thisValue;
@@ -3351,7 +3357,6 @@ pub const Expect = struct {
     pub const assertions = notImplementedStaticFn;
     pub const hasAssertions = notImplementedStaticFn;
     pub const objectContaining = notImplementedStaticFn;
-    pub const stringContaining = notImplementedStaticFn;
     pub const stringMatching = notImplementedStaticFn;
     pub const addSnapshotSerializer = notImplementedStaticFn;
 
@@ -3379,7 +3384,70 @@ pub const Expect = struct {
         var vm = globalObject.bunVM();
         vm.autoGarbageCollect();
     }
+
+    pub fn stringContaining(globalObject: *JSC.JSGlobalObject, callframe: *JSC.CallFrame) callconv(.C) JSC.JSValue {
+        const arguments_ = callframe.arguments(1);
+
+        if (arguments_.len < 1) {
+            globalObject.throw("expect.stringContaining() requires one argument", .{});
+            return .zero;
+        }
+
+        const arguments = arguments_.ptr[0..arguments_.len];
+        const expected = arguments[0];
+
+        if (!expected.isString()) {
+            globalObject.throw("expect.stringContaining() requires a string", .{});
+            return .zero;
+        }
+
+        const matcher = globalObject.bunVM().allocator.create(StringContainingMatcher) catch unreachable;
+        matcher.* = .{ .sample = stringFromJSValue(globalObject, expected), .inverted = false };
+        const js_value = matcher.toJS(globalObject);
+
+        return js_value;
+    }
+
+    pub const StringContainingMatcher = struct {
+        sample: string,
+        inverted: bool,
+
+        pub usingnamespace JSC.Codegen.JSStringContaining;
+
+        pub fn call(_: *JSC.JSGlobalObject, _: *JSC.CallFrame) callconv(.C) JSValue {
+            return .zero;
+        }
+
+        pub fn match(this: *StringContainingMatcher, ctx: *JSC.JSGlobalObject, value: JSValue) bool {
+            if (!value.isString()) {
+                return false;
+            }
+
+            const value_str = stringFromJSValue(ctx, value);
+
+            const passes = strings.contains(value_str, this.sample);
+
+            return !this.inverted and passes;
+        }
+    };
+
+    fn match(ctx: *JSC.JSGlobalObject, value: JSValue) ?bool {
+        if (JSC.Jest.Expect.StringContainingMatcher.fromJS(value)) |matcher| {
+            return matcher.match(ctx, value);
+        }
+
+        return null;
+    }
 };
+
+fn stringFromJSValue(ctx: *JSC.JSGlobalObject, value: JSValue) string {
+    var zig_str = ZigString.Empty;
+    value.toZigString(&zig_str, ctx);
+
+    const value_str = zig_str.full();
+
+    return value_str;
+}
 
 pub const TestScope = struct {
     label: string = "",

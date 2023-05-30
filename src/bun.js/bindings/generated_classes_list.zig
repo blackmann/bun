@@ -26,6 +26,7 @@ pub const Classes = struct {
     pub const SHA512_256 = JSC.API.Bun.Crypto.SHA512_256;
     pub const ServerWebSocket = JSC.API.ServerWebSocket;
     pub const Stats = JSC.Node.Stats;
+    pub const StringContaining = JSC.Jest.Expect.StringContainingMatcher;
     pub const Subprocess = JSC.Subprocess;
     pub const TCPSocket = JSC.API.TCPSocket;
     pub const TLSSocket = JSC.API.TLSSocket;
